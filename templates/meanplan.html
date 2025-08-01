@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head><title>Meal Plan</title></head>
+<body>
+  <h2>Your Recommended Meals</h2>
+  <ul>
+    {% for meal in meals %}
+      <li>{{ meal.Food }} - {{ meal.Calories }} cal, {{ meal.Protein }}g protein</li>
+    {% endfor %}
+  </ul>
+  <a href="/">Back</a>
+</body>
+</html>
