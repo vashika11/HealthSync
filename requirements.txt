@@ -1,4 +1,4 @@
-pygame
+
 flask
 gunicorn
-pandas==2.2.2
+pandas
