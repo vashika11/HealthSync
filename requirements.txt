@@ -1,5 +1,3 @@
-flask
-pandas
-scikit-learn
-gunicorn
 pygame
+flask
+gunicorn
