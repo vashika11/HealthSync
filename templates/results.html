@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="results-container">
+    <div class="results-header">
+        <h1 class="page-title">Your Personalized Meal Plan</h1>
+        <p class="page-subtitle">7-day meal plan tailored to your nutritional goals</p>
+        <div class="header-actions">
+            <a href="{{ url_for('meal_planner') }}" class="btn btn-outline">🔄 Generate New Plan</a>
+            <button onclick="window.print()" class="btn btn-secondary">🖨️ Print Plan</button>
+        </div>
+    </div>
+
+    <!-- Nutrition Summary -->
+    <div class="nutrition-summary">
+        <h2 class="summary-title">Weekly Nutrition Overview</h2>
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="summary-icon">🔥</div>
+                <div class="summary-content">
+                    <h3>Daily Average Calories</h3>
+                    <div class="summary-value">{{ "%.0f"|format(nutrition_summary.weekly_totals.avg_calories) }}</div>
+                    <div class="summary-target">Target: {{ user_goals.calories }}</div>
+                </div>
+            </div>
+            
+            <div class="summary-card">
+                <div class="summary-icon">💪</div>
+                <div class="summary-content">
+                    <h3>Daily Average Protein</h3>
+                    <div class="summary-value">{{ "%.1f"|format(nutrition_summary.weekly_totals.avg_protein) }}g</div>
+                    <div class="summary-target">Target: {{ user_goals.protein }}g</div>
+                </div>
+            </div>
+            
+            <div class="summary-card">
+                <div class="summary-icon">🌾</div>
+                <div class="summary-content">
+                    <h3>Daily Average Carbs</h3>
+                    <div class="summary-value">{{ "%.1f"|format(nutrition_summary.weekly_totals.avg_carbs) }}g</div>
+                    <div class="summary-target">Target: {{ user_goals.carbs }}g</div>
+                </div>
+            </div>
+            
+            <div class="summary-card">
+                <div class="summary-icon">🥑</div>
+                <div class="summary-content">
+                    <h3>Daily Average Fat</h3>
+                    <div class="summary-value">{{ "%.1f"|format(nutrition_summary.weekly_totals.avg_fat) }}g</div>
+                    <div class="summary-target">Target: {{ user_goals.fat }}g</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Weekly Meal Plan -->
+    <div class="weekly-plan">
+        <h2 class="plan-title">7-Day Meal Schedule</h2>
+        
+        {% for day, meals in meal_plan.items() %}
+            <div class="day-plan">
+                <h3 class="day-title">{{ day }}</h3>
+                <div class="day-meals">
+                    {% for meal_type, foods in meals.items() %}
+                        <div class="meal-card">
+                            <h4 class="meal-type">
+                                {% if meal_type == 'breakfast' %}🌅 Breakfast
+                                {% elif meal_type == 'lunch' %}☀️ Lunch
+                                {% elif meal_type == 'dinner' %}🌙 Dinner
+                                {% else %}🍎 {{ meal_type.title() }}
+                                {% endif %}
+                            </h4>
+                            
+                            {% if foods %}
+                                <div class="meal-foods">
+                                    {% for food in foods %}
+                                        <div class="food-detail">
+                                            <span class="food-name">{{ food.food_name }}</span>
+                                            <div class="food-nutrition">
+                                                <span class="nutrition-item">{{ food.calories_per_100g }}cal</span>
+                                                <span class="nutrition-item">{{ "%.1f"|format(food.protein) }}g protein</span>
+                                                <span class="nutrition-item">{{ food.category }}</span>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                
+                                <div class="meal-totals">
+                                    {% set meal_calories = foods|sum(attribute='calories_per_100g') %}
+                                    {% set meal_protein = foods|sum(attribute='protein') %}
+                                    <span class="total-calories">Total: {{ "%.0f"|format(meal_calories) }} calories, {{ "%.1f"|format(meal_protein) }}g protein</span>
+                                </div>
+                            {% else %}
+                                <p class="no-foods">No foods planned for this meal</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Shopping List -->
+    <div class="shopping-list">
+        <h2 class="list-title">🛒 Shopping List</h2>
+        <div class="category-lists">
+            {% set all_foods = [] %}
+            {% for day, meals in meal_plan.items() %}
+                {% for meal_type, foods in meals.items() %}
+                    {% set _ = all_foods.extend(foods) %}
+                {% endfor %}
+            {% endfor %}
+            
+            {% set categories = all_foods|groupby('category') %}
+            {% for category, foods in categories %}
+                <div class="category-list">
+                    <h3 class="category-title">{{ category }}</h3>
+                    <ul class="food-list">
+                        {% set unique_foods = foods|list|unique|list %}
+                        {% for food in unique_foods %}
+                            <li class="food-list-item">{{ food.food_name }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

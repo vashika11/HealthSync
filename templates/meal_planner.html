@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="meal-planner-container">
+    <div class="planner-header">
+        <h1 class="page-title">Smart Meal Planner</h1>
+        <p class="page-subtitle">Create personalized meal plans based on your nutritional goals</p>
+    </div>
+
+    <div class="planner-content">
+        <div class="planner-form-container">
+            <form action="{{ url_for('meal_planner') }}" method="post" class="meal-planner-form">
+                <div class="form-section">
+                    <h2 class="section-title">Nutritional Goals</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="calories" class="form-label">Daily Calories</label>
+                            <input type="number" id="calories" name="calories" value="2000" min="800" max="5000" class="form-input" required>
+                            <small class="form-help">Recommended: 1800-2500 calories/day</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="protein" class="form-label">Protein (g)</label>
+                            <input type="number" id="protein" name="protein" value="150" min="50" max="400" class="form-input" required>
+                            <small class="form-help">Recommended: 0.8-2.2g per kg body weight</small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="carbs" class="form-label">Carbohydrates (g)</label>
+                            <input type="number" id="carbs" name="carbs" value="250" min="50" max="800" class="form-input">
+                            <small class="form-help">45-65% of total calories</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="fat" class="form-label">Fats (g)</label>
+                            <input type="number" id="fat" name="fat" value="70" min="20" max="300" class="form-input">
+                            <small class="form-help">20-35% of total calories</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2 class="section-title">Preferences</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="activity_level" class="form-label">Activity Level</label>
+                            <select id="activity_level" name="activity_level" class="form-select">
+                                <option value="sedentary">Sedentary (office job)</option>
+                                <option value="light">Light Exercise (1-3 days/week)</option>
+                                <option value="moderate" selected>Moderate Exercise (3-5 days/week)</option>
+                                <option value="heavy">Heavy Exercise (6-7 days/week)</option>
+                                <option value="extra">Extra Heavy (2x/day, intense workouts)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="meal_count" class="form-label">Meals per Day</label>
+                            <select id="meal_count" name="meal_count" class="form-select">
+                                <option value="3" selected>3 meals</option>
+                                <option value="4">3 meals + 1 snack</option>
+                                <option value="5">3 meals + 2 snacks</option>
+                                <option value="6">6 small meals</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Dietary Restrictions</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="dietary_restrictions" value="vegetarian" class="form-checkbox">
+                                <span class="checkbox-text">Vegetarian</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="dietary_restrictions" value="vegan" class="form-checkbox">
+                                <span class="checkbox-text">Vegan</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="dietary_restrictions" value="gluten_free" class="form-checkbox">
+                                <span class="checkbox-text">Gluten-Free</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="dietary_restrictions" value="dairy_free" class="form-checkbox">
+                                <span class="checkbox-text">Dairy-Free</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-large">
+                        🎯 Generate My Meal Plan
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tips Section -->
+        <div class="tips-container">
+            <div class="tips-panel">
+                <h3 class="tips-title">💡 Planning Tips</h3>
+                <ul class="tips-list">
+                    <li>Aim for a balance of macronutrients in each meal</li>
+                    <li>Include a variety of colorful fruits and vegetables</li>
+                    <li>Choose lean proteins and whole grains</li>
+                    <li>Stay hydrated with 8-10 glasses of water daily</li>
+                    <li>Plan meals ahead to avoid unhealthy choices</li>
+                </ul>
+            </div>
+            
+            <div class="calculator-panel">
+                <h3 class="calculator-title">📊 Quick Calculator</h3>
+                <p class="calculator-text">Based on your activity level, here are some guidelines:</p>
+                <div class="calculator-info">
+                    <div class="calc-item">
+                        <strong>Sedentary:</strong> Body weight × 14-16 calories
+                    </div>
+                    <div class="calc-item">
+                        <strong>Moderate Activity:</strong> Body weight × 16-18 calories
+                    </div>
+                    <div class="calc-item">
+                        <strong>High Activity:</strong> Body weight × 18-22 calories
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

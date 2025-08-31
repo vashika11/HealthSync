@@ -1,15 +1,179 @@
-<!DOCTYPE html>
-<html>
-<head><title>HealthSync</title></head>
-<body>
-  <h2>Enter Your Nutritional Goals</h2>
-  <form action="/plan" method="post">
-    Calories: <input name="calories"><br>
-    Protein: <input name="protein"><br>
-    Fat: <input name="fat"><br>
-    Carbs: <input name="carbs"><br>
-    Fiber: <input name="fiber"><br>
-    <button type="submit">Get Meal Plan</button>
-  </form>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <h1 class="hero-title">Welcome back, {{ user_data.name }}!</h1>
+        <p class="hero-subtitle">Track your nutrition journey and achieve your health goals</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card calories-card">
+            <div class="stat-icon">🔥</div>
+            <div class="stat-content">
+                <h3 class="stat-title">Daily Calories</h3>
+                <div class="stat-value">{{ user_data.current_nutrition.calories }}/{{ user_data.goals.calories }}</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 45%;"></div>
+
+                </div>
+            </div>
+        </div>
+        
+        <div class="stat-card protein-card">
+            <div class="stat-icon">💪</div>
+            <div class="stat-content">
+                <h3 class="stat-title">Protein</h3>
+                <div class="stat-value">{{ "%.1f"|format(user_data.current_nutrition.protein) }}g/{{ user_data.goals.protein }}g</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 45%;"></div>
+
+                </div>
+            </div>
+        </div>
+        
+        <div class="stat-card carbs-card">
+            <div class="stat-icon">🌾</div>
+            <div class="stat-content">
+                <h3 class="stat-title">Carbohydrates</h3>
+                <div class="stat-value">{{ "%.1f"|format(user_data.current_nutrition.carbs) }}g/{{ user_data.goals.carbs }}g</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 45%;"></div>
+
+                </div>
+            </div>
+        </div>
+        
+        <div class="stat-card fat-card">
+            <div class="stat-icon">🥑</div>
+            <div class="stat-content">
+                <h3 class="stat-title">Healthy Fats</h3>
+                <div class="stat-value">{{ "%.1f"|format(user_data.current_nutrition.fat) }}g/{{ user_data.goals.fat }}g</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 45%;"></div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="content-grid">
+        <!-- Today's Meals -->
+        <div class="main-panel">
+            <div class="panel-header">
+                <h2 class="panel-title">Today's Meal Plan</h2>
+                <a href="{{ url_for('meal_planner') }}" class="btn btn-secondary">Plan New Meals</a>
+            </div>
+            
+            <div class="meals-container">
+                <!-- Breakfast -->
+                <div class="meal-section">
+                    <h3 class="meal-title">🌅 Breakfast</h3>
+                    <div class="meal-foods">
+                        {% if suggestions.breakfast %}
+                            {% for food in suggestions.breakfast %}
+                                <div class="food-item">
+                                    <span class="food-name">{{ food.food_name }}</span>
+                                    <span class="food-calories">{{ food.calories_per_100g }} cal</span>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="no-meals">No meals planned yet</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Lunch -->
+                <div class="meal-section">
+                    <h3 class="meal-title">☀️ Lunch</h3>
+                    <div class="meal-foods">
+                        {% if suggestions.lunch %}
+                            {% for food in suggestions.lunch %}
+                                <div class="food-item">
+                                    <span class="food-name">{{ food.food_name }}</span>
+                                    <span class="food-calories">{{ food.calories_per_100g }} cal</span>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="no-meals">No meals planned yet</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Dinner -->
+                <div class="meal-section">
+                    <h3 class="meal-title">🌙 Dinner</h3>
+                    <div class="meal-foods">
+                        {% if suggestions.dinner %}
+                            {% for food in suggestions.dinner %}
+                                <div class="food-item">
+                                    <span class="food-name">{{ food.food_name }}</span>
+                                    <span class="food-calories">{{ food.calories_per_100g }} cal</span>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="no-meals">No meals planned yet</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar-panel">
+            <!-- Quick Log Meal -->
+            <div class="quick-log-panel">
+                <h3 class="panel-title">Quick Log Meal</h3>
+                <form action="{{ url_for('log_meal') }}" method="post" class="quick-log-form">
+                    <select name="meal_type" class="form-select" required>
+                        <option value="">Select meal type</option>
+                        <option value="breakfast">Breakfast</option>
+                        <option value="lunch">Lunch</option>
+                        <option value="dinner">Dinner</option>
+                        <option value="snack">Snack</option>
+                    </select>
+                    
+                    <input type="text" name="food_items" placeholder="Food items (comma separated)" class="form-input" required>
+                    
+                    <input type="number" name="portions" placeholder="Portion (grams)" value="100" class="form-input" required>
+                    
+                    <button type="submit" class="btn btn-primary">Log Meal</button>
+                </form>
+            </div>
+            
+            <!-- Recent Meals -->
+            <div class="recent-meals-panel">
+                <h3 class="panel-title">Recent Meals</h3>
+                {% if user_data.meal_history %}
+                    <div class="recent-meals-list">
+                        {% for meal in user_data.meal_history[-5:] %}
+                            <div class="recent-meal-item">
+                                <div class="meal-info">
+                                    <span class="meal-type">{{ meal.type.title() }}</span>
+                                    <span class="meal-time">{{ meal.time }}</span>
+                                </div>
+                                <div class="meal-calories">{{ "%.0f"|format(meal.nutrition.calories) }} cal</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="no-meals">No recent meals logged</p>
+                {% endif %}
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="quick-actions-panel">
+                <h3 class="panel-title">Quick Actions</h3>
+                <div class="action-buttons">
+                    <a href="{{ url_for('meal_planner') }}" class="btn btn-outline">📅 Plan Meals</a>
+                    <a href="{{ url_for('profile') }}" class="btn btn-outline">⚙️ Update Goals</a>
+                    <a href="{{ url_for('reset_day') }}" class="btn btn-outline">🔄 Reset Day</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
